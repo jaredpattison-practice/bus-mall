@@ -33,9 +33,11 @@ new Item('usb', 'gif');
 new Item('water-can', 'jpg');
 new Item('wine-glass', 'jpg');
 
+var container = document.getElementById('image_container');
 var pic1 = document.getElementById('pic1');
 var pic2 = document.getElementById('pic2');
 var pic3 = document.getElementById('pic3');
+var productList = document.getElementById('productlist');
 
 function random() {
   return Math.floor(Math.random() * allPics.length);
@@ -49,16 +51,12 @@ function isValid(value) {
   return true;
 }
 
-function newPics() {
+function pics() {
+
   // alert(event.currentTssarget);
   randomPic(pic1);
   randomPic(pic2);
   randomPic(pic3);
-  if (caclTotalClicks() > 24) {
-    pic1.removeEventListener('click', newPics);
-    pic2.removeEventListener('click', newPics);
-    pic3.removeEventListener('click', newPics);
-  }
 }
 
 function randomPic(pic) {
@@ -74,13 +72,28 @@ function randomPic(pic) {
   pic.src = allPics[idx].filepath;
   pic.alt = allPics[idx].name;
   pic.title = allPics[idx].name;
-  pic.idx = idx;
+
   // console.log(idx);
 }
-function clickCounter(event) {
-  allPics[event.currentTarget.idx].clicks++;
-  console.log(event.currentTarget.idx);
+
+function handleClick(event) {
+  // console.log(event.target);
+  if(event.target.id === 'image_container') {
+    return alert('Please click on image');
+  }
+  for(var i = 0; i < allPics.length; i++) {
+    if (event.target.alt === allPics[i].name) {
+      allPics[i].clicks++;
+      console.log(allPics[i].clicks);
+    }
+  }
+  if (caclTotalClicks() === 6) {
+    container.removeEventListener('click', handleClick);
+    return showList();
+  }
+  pics();
 }
+
 function caclTotalClicks() {
   var tally = 0;
   for(var i = 0; i < allPics.length; i++){
@@ -89,9 +102,14 @@ function caclTotalClicks() {
   return tally;
 }
 
-newPics()
+function showList() {
+  for (var i = 0; i < allPics.length; i++) {
+    var liEl = document.createElement('li');
+    liEl.textContent = `${allPics[i].name} has ${allPics[i].displayed} and views and ${allPics[i].clicks} votes`;
+    productList.appendChild(liEl);
+  }
+}
 
-pic1.addEventListener('click', newPics);
-pic2.addEventListener('click', newPics);
-pic3.addEventListener('click', newPics);
+pics();
+container.addEventListener('click', handleClick);
 
