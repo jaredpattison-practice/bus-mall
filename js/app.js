@@ -54,6 +54,11 @@ function newPics() {
   randomPic(pic1);
   randomPic(pic2);
   randomPic(pic3);
+  if (caclTotalClicks() > 24) {
+    pic1.removeEventListener('click', newPics);
+    pic2.removeEventListener('click', newPics);
+    pic3.removeEventListener('click', newPics);
+  }
 }
 
 function randomPic(pic) {
@@ -89,3 +94,4 @@ newPics()
 pic1.addEventListener('click', newPics);
 pic2.addEventListener('click', newPics);
 pic3.addEventListener('click', newPics);
+
