@@ -7,7 +7,8 @@ var usedIdx = [];
 function Item(name, extension) {
   this.name = name;
   this.filepath = 'img/' + name + '.' + extension;
-  this.views = 0;
+  this.displayed = 0;
+  this.clicks = 0;
   allPics.push(this);
 }
 
@@ -37,7 +38,6 @@ var pic2 = document.getElementById('pic2');
 var pic3 = document.getElementById('pic3');
 
 function random() {
-  console.log(allPics.length);
   return Math.floor(Math.random() * allPics.length);
 }
 
@@ -50,6 +50,7 @@ function isValid(value) {
 }
 
 function newPics() {
+  // alert(event.currentTssarget);
   randomPic(pic1);
   randomPic(pic2);
   randomPic(pic3);
@@ -64,15 +65,27 @@ function randomPic(pic) {
     usedIdx.shift();
   }
   usedIdx.push(idx);
+  allPics[idx].displayed++;
   pic.src = allPics[idx].filepath;
   pic.alt = allPics[idx].name;
   pic.title = allPics[idx].name;
+  pic.idx = idx;
   // console.log(idx);
 }
+function clickCounter(event) {
+  allPics[event.currentTarget.idx].clicks++;
+  console.log(event.currentTarget.idx);
+}
+function caclTotalClicks() {
+  var tally = 0;
+  for(var i = 0; i < allPics.length; i++){
+    tally += allPics[i].clicks;
+  }
+  return tally;
+}
 
-newPics();
+newPics()
 
 pic1.addEventListener('click', newPics);
 pic2.addEventListener('click', newPics);
 pic3.addEventListener('click', newPics);
-
