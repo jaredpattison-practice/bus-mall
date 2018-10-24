@@ -64,7 +64,7 @@ function randomPic(pic) {
   while(isValid(idx) !== true){
     idx = random();
   }
-  if(usedIdx.length > 4) {
+  if(usedIdx.length > 5) {
     usedIdx.shift();
   }
   usedIdx.push(idx);
@@ -87,9 +87,10 @@ function handleClick(event) {
       console.log(allPics[i].clicks);
     }
   }
-  if (caclTotalClicks() === 6) {
+  if (caclTotalClicks() === 25) {
     container.removeEventListener('click', handleClick);
-    return showList();
+    updateChartArrays();
+    drawChart();
   }
   pics();
 }
@@ -113,3 +114,95 @@ function showList() {
 pics();
 container.addEventListener('click', handleClick);
 
+// Charts rendered using Chart JS v.2.6.0
+// http://www.chartjs.org/
+var resultsChart;
+var names = [];
+var votes = [];
+var chartDrawn = false;
+
+function updateChartArrays() {
+  for (var i = 0; i < allPics.length; i++) {
+    names[i] = allPics[i].name;
+    console.log(names[i]);
+    votes[i] = allPics[i].clicks;
+  }
+}
+
+
+var data = {
+  labels: names,
+  datasets: [{
+    data: votes,
+    backgroundColor: [
+      'rgba(255, 99, 132, 0.2)',
+      'rgba(54, 162, 235, 0.2)',
+      'rgba(255, 206, 86, 0.2)',
+      'rgba(75, 192, 192, 0.2)',
+      'rgba(153, 102, 255, 0.2)',
+      'rgba(255, 159, 64, 0.2)',
+      'rgba(255, 99, 132, 0.2)',
+      'rgba(54, 162, 235, 0.2)',
+      'rgba(255, 206, 86, 0.2)',
+      'rgba(75, 192, 192, 0.2)',
+      'rgba(153, 102, 255, 0.2)',
+      'rgba(255, 159, 64, 0.2)',
+      'rgba(255, 99, 132, 0.2)',
+      'rgba(54, 162, 235, 0.2)',
+      'rgba(255, 206, 86, 0.2)',
+      'rgba(75, 192, 192, 0.2)',
+      'rgba(153, 102, 255, 0.2)',
+      'rgba(255, 159, 64, 0.2)',
+      'rgba(255, 159, 64, 0.2)',
+      'rgba(255, 99, 132, 0.2)',
+    ],
+    borderColor: [
+      'rgba(255,99,132,1)',
+      'rgba(54, 162, 235, 1)',
+      'rgba(255, 206, 86, 1)',
+      'rgba(75, 192, 192, 1)',
+      'rgba(153, 102, 255, 1)',
+      'rgba(255, 159, 64, 1)',
+      'rgba(255,99,132,1)',
+      'rgba(54, 162, 235, 1)',
+      'rgba(255, 206, 86, 1)',
+      'rgba(75, 192, 192, 1)',
+      'rgba(153, 102, 255, 1)',
+      'rgba(255, 159, 64, 1)',
+      'rgba(255,99,132,1)',
+      'rgba(54, 162, 235, 1)',
+      'rgba(255, 206, 86, 1)',
+      'rgba(75, 192, 192, 1)',
+      'rgba(153, 102, 255, 1)',
+      'rgba(255, 159, 64, 1)',
+      'rgba(255, 159, 64, 1)',
+      'rgba(255,99,132,1)',
+    ],
+    borderWidth: 1
+  }]
+}
+
+function drawChart() {
+  var ctx = document.getElementById('productchart').getContext('2d');
+  resultsChart = new Chart(ctx, {
+    type: 'bar',
+    data: data,
+    options: {
+      responsive: false,
+      scales: {
+        xAxes: [{
+          ticks: {
+            maxRotation: 90,
+            minRotation: 80
+          }
+        }],
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  });
+  chartDrawn = true;
+}
