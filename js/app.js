@@ -1,43 +1,43 @@
 'use strict';
 
+// if ()
+var names = ['bag', 'banana', 'bathroom', 'boots', 'breakfast', 'bubblegum', 'chair', 'cthulhu', 'dog-duck', 'dragon', 'pen', 'pet-sweep', 'scissors', 'shark', 'sweep', 'tauntaun', 'unicorn', 'usb', 'water-can', 'wine-glass'];
 var allPics = [];
 var usedIdx = [];
+var clicks = 0;
 
-
-function Item(name, extension) {
-  this.name = name;
-  this.filepath = 'img/' + name + '.' + extension;
-  this.displayed = 0;
-  this.clicks = 0;
-  allPics.push(this);
+function Item(name) {
+  if(typeof (name) === 'object') {
+    this.name = name.name;
+    this.filepath = name.filepath;
+    this.displayed = name.displayed;
+    this.votes = name.votes;
+    allPics.push(this);
+    // console.log(name.name + ' pic at ' + name.filepath + ' displayed ' + name.displayed + ' times with ' + name.votes + ' clicks')
+  }else{
+    this.name = name;
+    this.filepath = `img/${name}.jpg`;
+    this.displayed = 0;
+    this.votes = 0;
+    allPics.push(this);
+  }
 }
 
-new Item('bag', 'jpg');
-new Item('banana', 'jpg');
-new Item('bathroom', 'jpg');
-new Item('boots', 'jpg');
-new Item('breakfast', 'jpg');
-new Item('bubblegum', 'jpg');
-new Item('chair', 'jpg');
-new Item('cthulhu', 'jpg');
-new Item('dog-duck', 'jpg');
-new Item('dragon', 'jpg');
-new Item('pen', 'jpg');
-new Item('pet-sweep', 'jpg');
-new Item('scissors', 'jpg');
-new Item('shark', 'jpg');
-new Item('sweep', 'png');
-new Item('tauntaun', 'jpg');
-new Item('unicorn', 'jpg');
-new Item('usb', 'gif');
-new Item('water-can', 'jpg');
-new Item('wine-glass', 'jpg');
-
+if(localStorage.storedAllPics) {
+  var recoveredAllPics = JSON.parse(localStorage.storedAllPics);
+  for(var i = 0; i < recoveredAllPics.length; i++) {
+    new Item(recoveredAllPics[i]);
+  }
+} else {
+  for(i = 0; i < names.length; i++) {
+    new Item(names[i]);
+  }
+}
 var container = document.getElementById('image_container');
 var pic1 = document.getElementById('pic1');
 var pic2 = document.getElementById('pic2');
 var pic3 = document.getElementById('pic3');
-var productList = document.getElementById('productlist');
+// var productList = document.getElementById('productlist');
 
 function random() {
   return Math.floor(Math.random() * allPics.length);
@@ -83,33 +83,27 @@ function handleClick(event) {
   }
   for(var i = 0; i < allPics.length; i++) {
     if (event.target.alt === allPics[i].name) {
-      allPics[i].clicks++;
-      console.log(allPics[i].clicks);
+      allPics[i].votes++;
     }
   }
-  if (caclTotalClicks() === 25) {
+  clicks++;
+  if (clicks === 25) {
     container.removeEventListener('click', handleClick);
-    updateChartArrays();
+    // showList();
+    updateChartArray();
     drawChart();
+    localStorage.storedAllPics = JSON.stringify(allPics);
   }
   pics();
 }
 
-function caclTotalClicks() {
-  var tally = 0;
-  for(var i = 0; i < allPics.length; i++){
-    tally += allPics[i].clicks;
-  }
-  return tally;
-}
-
-function showList() {
-  for (var i = 0; i < allPics.length; i++) {
-    var liEl = document.createElement('li');
-    liEl.textContent = `${allPics[i].name} has ${allPics[i].displayed} and views and ${allPics[i].clicks} votes`;
-    productList.appendChild(liEl);
-  }
-}
+// function showList() {
+//   for (var i = 0; i < allPics.length; i++) {
+//     var liEl = document.createElement('li');
+//     liEl.textContent = `${allPics[i].name} has ${allPics[i].displayed} and views and ${allPics[i].votes} votes`;
+//     productList.appendChild(liEl);
+//   }
+// }
 
 pics();
 container.addEventListener('click', handleClick);
@@ -117,16 +111,15 @@ container.addEventListener('click', handleClick);
 // Charts rendered using Chart JS v.2.6.0
 // http://www.chartjs.org/
 var resultsChart;
-var names = [];
 var votes = [];
 var chartDrawn = false;
 
-function updateChartArrays() {
+function updateChartArray() {
   for (var i = 0; i < allPics.length; i++) {
-    names[i] = allPics[i].name;
-    console.log(names[i]);
-    votes[i] = allPics[i].clicks;
+    votes[i] = allPics[i].votes;
   }
+  // console.log(votes);
+  // console.log(names);
 }
 
 
@@ -188,6 +181,10 @@ function drawChart() {
     type: 'bar',
     data: data,
     options: {
+      title: {
+        display: true,
+        text: 'Votes by Product'
+      },
       responsive: false,
       scales: {
         xAxes: [{
