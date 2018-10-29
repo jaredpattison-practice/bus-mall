@@ -4,6 +4,11 @@ h1 {
 }
 
 img {
+
+    border: 6px solid #214;
+    border-radius: 20px;
     height: 300px;
     width: 300px;
+    margin: 3%;
+    vertical-align: middle;
 }

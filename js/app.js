@@ -1,10 +1,9 @@
 'use strict';
 
-// if ()
-var names = ['bag', 'banana', 'bathroom', 'boots', 'breakfast', 'bubblegum', 'chair', 'cthulhu', 'dog-duck', 'dragon', 'pen', 'pet-sweep', 'scissors', 'shark', 'sweep', 'tauntaun', 'unicorn', 'usb', 'water-can', 'wine-glass'];
-var allPics = [];
-var usedIdx = [];
-var clicks = 0;
+Item.names = ['bag', 'banana', 'bathroom', 'boots', 'breakfast', 'bubblegum', 'chair', 'cthulhu', 'dog-duck', 'dragon', 'pen', 'pet-sweep', 'scissors', 'shark', 'sweep', 'tauntaun', 'unicorn', 'usb', 'water-can', 'wine-glass'];
+Item.allPics = [];
+Item.usedIdx = [];
+Item.clicks = 0;
 
 function Item(name) {
   if(typeof (name) === 'object') {
@@ -12,14 +11,14 @@ function Item(name) {
     this.filepath = name.filepath;
     this.displayed = name.displayed;
     this.votes = name.votes;
-    allPics.push(this);
-    // console.log(name.name + ' pic at ' + name.filepath + ' displayed ' + name.displayed + ' times with ' + name.votes + ' clicks')
+    Item.allPics.push(this);
+
   }else{
     this.name = name;
     this.filepath = `img/${name}.jpg`;
     this.displayed = 0;
     this.votes = 0;
-    allPics.push(this);
+    Item.allPics.push(this);
   }
 }
 
@@ -29,23 +28,21 @@ if(localStorage.storedAllPics) {
     new Item(recoveredAllPics[i]);
   }
 } else {
-  for(i = 0; i < names.length; i++) {
-    new Item(names[i]);
+  for(i = 0; i < Item.names.length; i++) {
+    new Item(Item.names[i]);
   }
 }
 var container = document.getElementById('image_container');
 var pic1 = document.getElementById('pic1');
 var pic2 = document.getElementById('pic2');
 var pic3 = document.getElementById('pic3');
-// var productList = document.getElementById('productlist');
 
 function random() {
-  return Math.floor(Math.random() * allPics.length);
+  return Math.floor(Math.random() * Item.allPics.length);
 }
 
 function isValid(value) {
-  if(usedIdx.includes(value)){
-    // console.log('Repeat', value);
+  if(Item.usedIdx.includes(value)){
     return false;
   }
   return true;
@@ -53,7 +50,6 @@ function isValid(value) {
 
 function pics() {
 
-  // alert(event.currentTssarget);
   randomPic(pic1);
   randomPic(pic2);
   randomPic(pic3);
@@ -64,43 +60,40 @@ function randomPic(pic) {
   while(isValid(idx) !== true){
     idx = random();
   }
-  if(usedIdx.length > 5) {
-    usedIdx.shift();
+  if(Item.usedIdx.length > 5) {
+    Item.usedIdx.shift();
   }
-  usedIdx.push(idx);
-  allPics[idx].displayed++;
-  pic.src = allPics[idx].filepath;
-  pic.alt = allPics[idx].name;
-  pic.title = allPics[idx].name;
-
-  // console.log(idx);
+  Item.usedIdx.push(idx);
+  Item.allPics[idx].displayed++;
+  pic.src = Item.allPics[idx].filepath;
+  pic.alt = Item.allPics[idx].name;
+  pic.title = Item.allPics[idx].name;
 }
 
 function handleClick(event) {
-  // console.log(event.target);
   if(event.target.id === 'image_container') {
     return alert('Please click on image');
   }
-  for(var i = 0; i < allPics.length; i++) {
-    if (event.target.alt === allPics[i].name) {
-      allPics[i].votes++;
+  for(var i = 0; i < Item.allPics.length; i++) {
+    if (event.target.alt === Item.allPics[i].name) {
+      Item.allPics[i].votes++;
     }
   }
-  clicks++;
-  if (clicks === 25) {
+  Item.clicks++;
+  if (Item.clicks === 25) {
     container.removeEventListener('click', handleClick);
     // showList();
     updateChartArray();
     drawChart();
-    localStorage.storedAllPics = JSON.stringify(allPics);
+    localStorage.storedAllPics = JSON.stringify(Item.allPics);
   }
   pics();
 }
 
 // function showList() {
-//   for (var i = 0; i < allPics.length; i++) {
+//   for (var i = 0; i < Item.allPics.length; i++) {
 //     var liEl = document.createElement('li');
-//     liEl.textContent = `${allPics[i].name} has ${allPics[i].displayed} and views and ${allPics[i].votes} votes`;
+//     liEl.textContent = `${alItem.lPics[i].name} has ${Item.allPics[i].displayed} and views and ${Item.allPics[i].votes} votes`;
 //     productList.appendChild(liEl);
 //   }
 // }
@@ -115,16 +108,14 @@ var votes = [];
 var chartDrawn = false;
 
 function updateChartArray() {
-  for (var i = 0; i < allPics.length; i++) {
-    votes[i] = allPics[i].votes;
+  for (var i = 0; i < Item.allPics.length; i++) {
+    votes[i] = Item.allPics[i].votes;
   }
-  // console.log(votes);
-  // console.log(names);
 }
 
 
 var data = {
-  labels: names,
+  labels: Item.names,
   datasets: [{
     data: votes,
     backgroundColor: [
